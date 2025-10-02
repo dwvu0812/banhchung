@@ -1,5 +1,6 @@
 import React from 'react';
 import { heroIllustration } from '../../../assets';
+import DailyMotivationQuote from '../../../components/DailyMotivationQuote';
 import { Button } from '../../../components/ui/button';
 
 interface HeroSectionProps {
@@ -20,18 +21,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onLogin }) => (
         <p className="mt-4 text-base text-slate-600 sm:text-lg">
           Tập trung vào những từ quan trọng nhất mỗi ngày cùng thẻ học trực quan, thống kê tối giản và nhắc học thông minh.
         </p>
-        <ul className="mt-6 space-y-3 text-sm text-slate-600">
-          {[
-            'Theo dõi tiến độ rõ ràng trên một bảng điều khiển duy nhất',
-            'Cấu trúc bài học ngắn gọn, phù hợp cho 15 phút mỗi ngày',
-            'Đồng bộ trên mọi thiết bị với tài khoản Google của bạn',
-          ].map((item) => (
-            <li key={item} className="flex items-start gap-3">
-              <span className="mt-1 h-2 w-2 rounded-full bg-slate-900" />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
+        <DailyMotivationQuote className="mt-8 w-full border-0 bg-slate-900/95 text-slate-100 shadow-xl shadow-slate-900/20" />
         <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:items-center">
           <Button
             size="lg"
