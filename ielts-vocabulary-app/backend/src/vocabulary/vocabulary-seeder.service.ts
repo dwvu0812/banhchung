@@ -6,6 +6,30 @@ import { Vocabulary } from './interfaces/vocabulary.interface';
 export class VocabularySeederService {
   constructor(private databaseService: DatabaseService) {}
 
+  private buildImageUrl(word: string, topics?: string[]): string {
+    const keywordParts = [word, ...(topics ?? [])].filter(Boolean);
+    const query = encodeURIComponent(keywordParts.join(' ') || word);
+    return `https://source.unsplash.com/featured/400x300?${query}`;
+  }
+
+  private buildAudioUrl(word: string): string {
+    const slug = word
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    const safeSlug = slug || word.toLowerCase();
+    return `https://api.dictionaryapi.dev/media/pronunciations/en/${safeSlug}-us.mp3`;
+  }
+
+  private withMediaAssets(vocabulary: Vocabulary): Vocabulary {
+    const topics = vocabulary.topics ?? [];
+    return {
+      ...vocabulary,
+      imageUrl: vocabulary.imageUrl ?? this.buildImageUrl(vocabulary.word, topics),
+      audioUrl: vocabulary.audioUrl ?? this.buildAudioUrl(vocabulary.word),
+    };
+  }
+
   async seedIeltsVocabulary(): Promise<void> {
     const db = this.databaseService.getDb();
     
@@ -23,7 +47,7 @@ export class VocabularySeederService {
 
   private getIeltsVocabularyPackages(): Vocabulary[] {
     const now = new Date();
-    return [
+    const entries: Vocabulary[] = [
       // IELTS Writing Task 2 - Essential Academic Vocabulary
       {
         word: "significant",
@@ -1049,5 +1073,7 @@ export class VocabularySeederService {
         updatedAt: now,
       }
     ];
+
+    return entries.map((item) => this.withMediaAssets(item));
   }
 }

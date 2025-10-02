@@ -8,22 +8,56 @@ import { ObjectId } from 'mongodb';
 export class VocabularyService {
   constructor(private databaseService: DatabaseService) {}
 
+  private buildImageUrl(word: string, topics?: string[]): string {
+    const keywordParts = [word, ...(topics ?? [])].filter(Boolean);
+    const query = encodeURIComponent(keywordParts.join(' ') || word);
+    return `https://source.unsplash.com/featured/400x300?${query}`;
+  }
+
+  private buildAudioUrl(word: string): string {
+    const slug = word
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    const safeSlug = slug || word.toLowerCase();
+    return `https://api.dictionaryapi.dev/media/pronunciations/en/${safeSlug}-us.mp3`;
+  }
+
+  private enrichVocabulary(vocabulary: Vocabulary): Vocabulary {
+    const topics = vocabulary.topics ?? [];
+
+    return {
+      ...vocabulary,
+      synonyms: vocabulary.synonyms ?? [],
+      antonyms: vocabulary.antonyms ?? [],
+      collocations: vocabulary.collocations ?? [],
+      topics,
+      imageUrl: vocabulary.imageUrl ?? this.buildImageUrl(vocabulary.word, topics),
+      audioUrl: vocabulary.audioUrl ?? this.buildAudioUrl(vocabulary.word),
+    };
+  }
+
   async create(createVocabularyDto: CreateVocabularyDto): Promise<Vocabulary> {
     const db = this.databaseService.getDb();
     const now = new Date();
-    
+    const topics = createVocabularyDto.topics || [];
+    const providedImageUrl = createVocabularyDto.imageUrl?.trim();
+    const providedAudioUrl = createVocabularyDto.audioUrl?.trim();
+
     const vocabulary: Vocabulary = {
       ...createVocabularyDto,
       synonyms: createVocabularyDto.synonyms || [],
       antonyms: createVocabularyDto.antonyms || [],
       collocations: createVocabularyDto.collocations || [],
-      topics: createVocabularyDto.topics || [],
+      topics,
+      imageUrl: providedImageUrl || this.buildImageUrl(createVocabularyDto.word, topics),
+      audioUrl: providedAudioUrl || this.buildAudioUrl(createVocabularyDto.word),
       createdAt: now,
       updatedAt: now,
     };
 
     const result = await db.collection('vocabulary').insertOne(vocabulary);
-    return { ...vocabulary, _id: result.insertedId };
+    return this.enrichVocabulary({ ...vocabulary, _id: result.insertedId });
   }
 
   async findAll(page: number = 1, limit: number = 20, difficulty?: string, topic?: string): Promise<{
@@ -44,8 +78,10 @@ export class VocabularyService {
       db.collection('vocabulary').countDocuments(filter),
     ]);
 
+    const enrichedData = (data as Vocabulary[]).map((item) => this.enrichVocabulary(item));
+
     return {
-      data: data as Vocabulary[],
+      data: enrichedData,
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -54,14 +90,17 @@ export class VocabularyService {
 
   async findById(id: string): Promise<Vocabulary | null> {
     const db = this.databaseService.getDb();
-    return await db.collection('vocabulary').findOne({ _id: new ObjectId(id) }) as Vocabulary | null;
+    const vocabulary = await db.collection('vocabulary').findOne({ _id: new ObjectId(id) });
+    return vocabulary ? this.enrichVocabulary(vocabulary as Vocabulary) : null;
   }
 
   async findByWord(word: string): Promise<Vocabulary | null> {
     const db = this.databaseService.getDb();
-    return await db.collection('vocabulary').findOne({ 
-      word: { $regex: new RegExp(`^${word}$`, 'i') } 
-    }) as Vocabulary | null;
+    const vocabulary = await db.collection('vocabulary').findOne({
+      word: { $regex: new RegExp(`^${word}$`, 'i') }
+    });
+
+    return vocabulary ? this.enrichVocabulary(vocabulary as Vocabulary) : null;
   }
 
   async search(
@@ -110,8 +149,10 @@ export class VocabularyService {
       db.collection('vocabulary').countDocuments(searchFilter),
     ]);
 
+    const enrichedData = (data as Vocabulary[]).map((item) => this.enrichVocabulary(item));
+
     return {
-      data: data as Vocabulary[],
+      data: enrichedData,
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -134,7 +175,7 @@ export class VocabularyService {
     const count = await db.collection('vocabulary').countDocuments();
     
     if (count === 0) {
-      const sampleVocabulary = this.getSampleVocabulary();
+      const sampleVocabulary = this.getSampleVocabulary().map((item) => this.enrichVocabulary(item));
       await db.collection('vocabulary').insertMany(sampleVocabulary);
       console.log('Sample vocabulary data initialized');
     }

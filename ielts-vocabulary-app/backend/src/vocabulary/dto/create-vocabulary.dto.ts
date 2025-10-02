@@ -35,4 +35,12 @@ export class CreateVocabularyDto {
   @IsArray()
   @IsOptional()
   topics?: string[];
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  audioUrl?: string;
 }

@@ -12,6 +12,8 @@ export interface Vocabulary {
   collocations?: Collocation[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   topics?: string[];
+  imageUrl?: string;
+  audioUrl?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

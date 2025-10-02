@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { userAPI } from '../services/api';
 import { StudySession } from '../types';
 import { Volume2, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { resolveVocabularyAudioUrl, resolveVocabularyImageUrl, FALLBACK_VOCABULARY_IMAGE } from '../lib/media';
 
 const StudyPage: React.FC = () => {
   const [sessions, setSessions] = useState<StudySession[]>([]);
@@ -12,6 +13,7 @@ const StudyPage: React.FC = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(0);
+  const audioElementsRef = useRef<Record<string, HTMLAudioElement>>({});
 
   useEffect(() => {
     loadStudySessions();
@@ -52,13 +54,44 @@ const StudyPage: React.FC = () => {
     }
   };
 
-  const speakWord = (text: string) => {
+  const speakWordWithSpeechSynthesis = useCallback((text: string) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       speechSynthesis.speak(utterance);
     }
-  };
+  }, []);
+
+  const playPronunciation = useCallback((vocabulary: StudySession['vocabulary']) => {
+    const audioUrl = resolveVocabularyAudioUrl(vocabulary);
+
+    if (typeof Audio !== 'undefined' && audioUrl) {
+      const cache = audioElementsRef.current;
+      const cacheKey = vocabulary._id;
+      let audioElement = cache[cacheKey];
+
+      if (!audioElement || audioElement.src !== audioUrl) {
+        audioElement = new Audio(audioUrl);
+        audioElement.onerror = () => speakWordWithSpeechSynthesis(vocabulary.word);
+        cache[cacheKey] = audioElement;
+      }
+
+      audioElement.currentTime = 0;
+      const playPromise = audioElement.play();
+      if (playPromise?.catch) {
+        playPromise.catch(() => speakWordWithSpeechSynthesis(vocabulary.word));
+      }
+      return;
+    }
+
+    speakWordWithSpeechSynthesis(vocabulary.word);
+  }, [speakWordWithSpeechSynthesis]);
+
+  const handleImageError = useCallback((event: React.SyntheticEvent<HTMLImageElement>) => {
+    if (event.currentTarget.src !== FALLBACK_VOCABULARY_IMAGE) {
+      event.currentTarget.src = FALLBACK_VOCABULARY_IMAGE;
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -94,6 +127,7 @@ const StudyPage: React.FC = () => {
 
   const currentSession = sessions[currentIndex];
   const progress = ((completed) / sessions.length) * 100;
+  const illustrationUrl = resolveVocabularyImageUrl(currentSession.vocabulary);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -117,9 +151,10 @@ const StudyPage: React.FC = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => speakWord(currentSession.vocabulary.word)}
+                onClick={() => playPronunciation(currentSession.vocabulary)}
               >
                 <Volume2 className="h-5 w-5" />
+                <span className="sr-only">Nghe phát âm</span>
               </Button>
             </CardTitle>
             <p className="text-lg text-gray-600">
@@ -130,6 +165,15 @@ const StudyPage: React.FC = () => {
             </p>
           </CardHeader>
           <CardContent>
+            <div className="mb-6 overflow-hidden rounded-2xl bg-gray-100 shadow-inner">
+              <img
+                src={illustrationUrl}
+                alt={`Minh họa cho từ ${currentSession.vocabulary.word}`}
+                className="h-48 w-full object-cover"
+                loading="lazy"
+                onError={handleImageError}
+              />
+            </div>
             {!showAnswer ? (
               <div className="text-center py-8">
                 <p className="text-lg mb-6">Bạn có nhớ nghĩa của từ này không?</p>
