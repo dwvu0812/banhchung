@@ -12,6 +12,7 @@ const StudyPage: React.FC = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(0);
+  const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   useEffect(() => {
     loadStudySessions();
@@ -34,21 +35,33 @@ const StudyPage: React.FC = () => {
     if (!currentSession) return;
 
     try {
+      // Show immediate feedback
+      setFeedback(correct ? 'correct' : 'incorrect');
+      
       await userAPI.updateProgress(currentSession.vocabulary._id, correct);
       setCompleted(completed + 1);
       
-      if (currentIndex < sessions.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-        setShowAnswer(false);
-      } else {
-        // Study session completed
-        alert('Hoàn thành phiên học! Chúc mừng bạn!');
-        loadStudySessions(); // Reload for next session
-        setCurrentIndex(0);
-        setCompleted(0);
-      }
+      // Add a delay for better UX and to show feedback
+      setTimeout(() => {
+        setFeedback(null);
+        if (currentIndex < sessions.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+          setShowAnswer(false);
+        } else {
+          // Study session completed
+          setCompleted(sessions.length);
+          setTimeout(() => {
+            alert('🎉 Hoàn thành phiên học! Chúc mừng bạn! 🎉');
+            loadStudySessions(); // Reload for next session
+            setCurrentIndex(0);
+            setCompleted(0);
+          }, 500);
+        }
+      }, 1200);
     } catch (error) {
       console.error('Error updating progress:', error);
+      setFeedback(null);
+      alert('Có lỗi xảy ra. Vui lòng thử lại!');
     }
   };
 
@@ -185,6 +198,7 @@ const StudyPage: React.FC = () => {
                     variant="destructive"
                     className="flex-1"
                     onClick={() => handleAnswer(false)}
+                    disabled={feedback !== null}
                   >
                     <XCircle className="h-4 w-4 mr-2" />
                     Khó
@@ -192,11 +206,35 @@ const StudyPage: React.FC = () => {
                   <Button
                     className="flex-1"
                     onClick={() => handleAnswer(true)}
+                    disabled={feedback !== null}
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Dễ
                   </Button>
                 </div>
+                
+                {/* Feedback overlay */}
+                {feedback && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className={`bg-white rounded-lg p-8 text-center shadow-xl ${
+                      feedback === 'correct' ? 'border-green-500' : 'border-red-500'
+                    } border-4`}>
+                      {feedback === 'correct' ? (
+                        <>
+                          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                          <h3 className="text-2xl font-bold text-green-600 mb-2">Tuyệt vời! 🎉</h3>
+                          <p className="text-gray-600">Bạn đã trả lời đúng!</p>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+                          <h3 className="text-2xl font-bold text-red-600 mb-2">Cần cố gắng thêm! 💪</h3>
+                          <p className="text-gray-600">Đừng lo, hãy tiếp tục luyện tập!</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>

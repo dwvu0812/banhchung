@@ -4,12 +4,14 @@
 
 ## Tính năng chính
 
-- 🧠 **Spaced Repetition**: Thuật toán học tập thông minh giúp ghi nhớ từ vựng lâu dài
-- 📚 **Từ vựng IELTS**: Tập trung vào từ vựng quan trọng cho kỳ thi IELTS
-- 🔗 **Collocations**: Học các cụm từ và cách sử dụng từ vựng trong ngữ cảnh
-- 📊 **Theo dõi tiến độ**: Thống kê chi tiết về quá trình học tập
-- 🔐 **Google OAuth**: Đăng nhập dễ dàng với tài khoản Google
-- 📱 **Responsive Design**: Giao diện thân thiện trên mọi thiết bị
+- 🧠 **Spaced Repetition**: Thuật toán học tập thông minh được tối ưu hóa giúp ghi nhớ từ vựng lâu dài
+- 📚 **Từ vựng IELTS**: Hơn 15 từ vựng chất lượng cao được phân loại theo chủ đề
+- 🔗 **Collocations**: Học các cụm từ và cách sử dụng từ vựng trong ngữ cảnh thực tế
+- 📊 **Theo dõi tiến độ**: Thống kê chi tiết và trực quan về quá trình học tập
+- 🔐 **Google OAuth**: Đăng nhập dễ dàng và bảo mật với tài khoản Google
+- 📱 **Responsive Design**: Giao diện đẹp mắt và thân thiện trên mọi thiết bị
+- 🎯 **Feedback tức thì**: Phản hồi ngay lập tức khi trả lời để tăng động lực học tập
+- 🔊 **Text-to-Speech**: Phát âm từ vựng để cải thiện kỹ năng nghe và nói
 
 ## Công nghệ sử dụng
 
@@ -83,21 +85,47 @@ REACT_APP_API_URL=http://localhost:3001/api
 
 ### 5. Chạy ứng dụng
 
+#### Phương pháp 1: Development mode
 Chạy MongoDB (nếu chưa chạy):
 ```bash
 mongod
 ```
 
-Chạy backend:
+Chạy cả backend và frontend:
 ```bash
-cd backend
-npm run start:dev
+npm run dev
 ```
 
-Chạy frontend (terminal mới):
+Hoặc chạy riêng lẻ:
 ```bash
+# Backend
+cd backend
+npm run start:dev
+
+# Frontend (terminal mới)
 cd frontend
 npm start
+```
+
+#### Phương pháp 2: Docker (Khuyến nghị)
+```bash
+# Chạy tất cả services với Docker
+docker-compose up -d
+
+# Xem logs
+docker-compose logs -f
+
+# Dừng services
+docker-compose down
+```
+
+#### Phương pháp 3: Sử dụng setup script
+```bash
+# Cài đặt tự động
+./scripts/setup.sh
+
+# Kiểm tra health
+./scripts/check-health.sh
 ```
 
 Ứng dụng sẽ chạy tại:
@@ -132,16 +160,21 @@ ielts-vocabulary-app/
 
 ## Thuật toán Spaced Repetition
 
-Ứng dụng sử dụng thuật toán Spaced Repetition với 6 level (0-5):
+Ứng dụng sử dụng thuật toán Spaced Repetition được tối ưu hóa với 7 level (0-6):
 
-- **Level 0**: Ôn lại sau 1 ngày
-- **Level 1**: Ôn lại sau 3 ngày
-- **Level 2**: Ôn lại sau 7 ngày
-- **Level 3**: Ôn lại sau 14 ngày
-- **Level 4**: Ôn lại sau 30 ngày
-- **Level 5**: Ôn lại sau 90 ngày
+- **Level 0**: Ôn lại sau 10 phút (từ vựng khó)
+- **Level 1**: Ôn lại sau 1 ngày
+- **Level 2**: Ôn lại sau 3 ngày
+- **Level 3**: Ôn lại sau 1 tuần
+- **Level 4**: Ôn lại sau 2 tuần
+- **Level 5**: Ôn lại sau 1 tháng
+- **Level 6**: Ôn lại sau 3 tháng (đã thuộc)
 
-Khi trả lời đúng, level tăng lên. Khi trả lời sai, level giảm xuống.
+### Cơ chế nâng/hạ level:
+- **Trả lời đúng**: Level tăng 1 (tối đa level 6)
+- **Trả lời sai**: 
+  - Level 0-1: Về level 0
+  - Level 2+: Giảm 2 level để đảm bảo ghi nhớ tốt hơn
 
 ## API Endpoints
 
