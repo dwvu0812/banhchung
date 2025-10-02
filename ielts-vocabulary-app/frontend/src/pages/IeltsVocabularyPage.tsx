@@ -342,102 +342,109 @@ const IeltsVocabularyPage: React.FC = () => {
   }, [sortOption, vocabularyItems, progressMap]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 px-4 py-10">
+      <div className="mx-auto max-w-6xl space-y-10">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                📚 Gói từ vựng IELTS Band 6.5
+        <div className="rounded-3xl border border-white/60 bg-white/80 p-8 shadow-xl shadow-sky-100 backdrop-blur">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+                <BookOpen className="h-3.5 w-3.5" /> IELTS Vocabulary Pack
+              </span>
+              <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+                Gói từ vựng IELTS Band 6.5
               </h1>
-              <p className="text-gray-600">
-                Bộ sưu tập từ vựng chuyên biệt cho kỳ thi IELTS, được phân loại theo chủ đề và độ khó
+              <p className="max-w-xl text-sm text-slate-500">
+                Bộ sưu tập từ vựng chuyên biệt cho kỳ thi IELTS với các chủ đề trọng tâm, mức độ rõ ràng và hệ thống ôn luyện khoa học.
               </p>
             </div>
-            <Button 
-              onClick={handleSeedIeltsVocabulary} 
+            <Button
+              onClick={handleSeedIeltsVocabulary}
               disabled={seeding}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="h-12 rounded-full bg-sky-500 px-6 text-sm font-semibold text-white shadow-md shadow-sky-200 transition hover:bg-sky-600 disabled:shadow-none"
             >
               {seeding ? 'Đang thêm...' : '+ Thêm từ vựng IELTS'}
             </Button>
           </div>
 
           {/* Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <BookOpen className="h-8 w-8 text-blue-600 mr-3" />
-                  <div>
-                    <p className="text-2xl font-bold">{pagination.total || 0}</p>
-                    <p className="text-sm text-gray-600">Tổng từ vựng</p>
-                  </div>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="rounded-2xl border border-sky-100/60 bg-sky-50/80 p-5 text-slate-700 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-inner">
+                  <BookOpen className="h-5 w-5 text-sky-500" />
                 </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <Target className="h-8 w-8 text-green-600 mr-3" />
-                  <div>
-                    <p className="text-2xl font-bold">6.5</p>
-                    <p className="text-sm text-gray-600">Mục tiêu Band</p>
-                  </div>
+                <div>
+                  <p className="text-2xl font-semibold text-slate-900">{pagination.total || 0}</p>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Tổng từ vựng</p>
                 </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <Users className="h-8 w-8 text-purple-600 mr-3" />
-                  <div>
-                    <p className="text-2xl font-bold">{topics.length}</p>
-                    <p className="text-sm text-gray-600">Chủ đề</p>
-                  </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-emerald-100/60 bg-emerald-50/80 p-5 text-slate-700 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-inner">
+                  <Target className="h-5 w-5 text-emerald-500" />
                 </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center">
-                  <Lightbulb className="h-8 w-8 text-yellow-600 mr-3" />
-                  <div>
-                    <p className="text-2xl font-bold">3</p>
-                    <p className="text-sm text-gray-600">Cấp độ</p>
-                  </div>
+                <div>
+                  <p className="text-2xl font-semibold text-slate-900">6.5</p>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Mục tiêu Band</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-amber-100/60 bg-amber-50/80 p-5 text-slate-700 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-inner">
+                  <Users className="h-5 w-5 text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-slate-900">{topics.length}</p>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Chủ đề</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-violet-100/60 bg-violet-50/80 p-5 text-slate-700 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-inner">
+                  <Lightbulb className="h-5 w-5 text-violet-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-slate-900">3</p>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Cấp độ</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="mb-6 space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="relative">
-              <Search className="h-4 w-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
+                <Search className="h-4 w-4 text-slate-400" />
+              </div>
               <input
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 type="search"
-                placeholder="Tìm kiếm theo từ vựng, định nghĩa hoặc từ đồng nghĩa..."
-                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder="Tìm kiếm từ vựng, định nghĩa hoặc từ đồng nghĩa..."
+                className="w-full rounded-full border border-white/70 bg-white/80 py-3 pl-11 pr-4 text-sm text-slate-600 shadow-inner transition placeholder:text-slate-400 focus:border-sky-300 focus:outline-none focus:ring-4 focus:ring-sky-100"
               />
               {debouncedSearchTerm && (
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-slate-500">
                   Đang hiển thị kết quả cho "{debouncedSearchTerm}"
                 </p>
               )}
             </div>
 
-            <div className="flex flex-col gap-2 lg:items-end">
-              <label className="text-sm font-medium text-gray-600">Sắp xếp theo mức độ thành thạo</label>
+            <div className="flex flex-col gap-2 md:items-end">
+              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Sắp xếp theo mức độ thành thạo
+              </label>
               <select
                 value={sortOption}
                 onChange={(event) => setSortOption(event.target.value as SortOption)}
-                className="w-full lg:w-64 rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                className="w-full rounded-full border border-white/70 bg-white/80 py-3 px-4 text-sm text-slate-600 shadow-inner transition focus:border-sky-300 focus:outline-none focus:ring-4 focus:ring-sky-100 md:w-64"
               >
                 <option value="default">Mặc định (theo thời gian thêm)</option>
                 <option value="mastery-desc">Độ thành thạo cao → thấp</option>
@@ -447,37 +454,40 @@ const IeltsVocabularyPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Topic Filter */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Chọn chủ đề IELTS</CardTitle>
+            <Card className="border-none bg-white/80 shadow-lg shadow-sky-100">
+              <CardHeader className="space-y-2 pb-4">
+                <CardTitle className="text-lg text-slate-800">Chủ đề trọng tâm</CardTitle>
+                <p className="text-sm text-slate-500">
+                  Chọn chủ đề bạn muốn tập trung để hệ thống lọc ra các từ liên quan nhất.
+                </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setSelectedTopic('all')}
-                    className={`p-3 rounded-lg border text-left transition-colors ${
-                      selectedTopic === 'all' 
-                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                        : 'border-gray-200 hover:border-gray-300'
+                    className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
+                      selectedTopic === 'all'
+                        ? 'border-sky-300 bg-sky-100/80 text-sky-700 shadow-sm'
+                        : 'border-white/80 bg-white hover:border-sky-200 hover:bg-sky-50/70'
                     }`}
                   >
-                    <div className="font-medium">📚 Tất cả</div>
-                    <div className="text-sm text-gray-600">Toàn bộ từ vựng</div>
+                    <div className="font-semibold text-slate-800">📚 Tất cả</div>
+                    <div className="mt-1 text-xs text-slate-500">Toàn bộ từ vựng</div>
                   </button>
                   {ieltsTopics.map((topic) => (
                     <button
                       key={topic.key}
                       onClick={() => setSelectedTopic(topic.key)}
-                      className={`p-3 rounded-lg border text-left transition-colors ${
-                        selectedTopic === topic.key 
-                          ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                          : 'border-gray-200 hover:border-gray-300'
+                      className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
+                        selectedTopic === topic.key
+                          ? 'border-sky-300 bg-sky-100/80 text-sky-700 shadow-sm'
+                          : 'border-white/80 bg-white hover:border-sky-200 hover:bg-sky-50/70'
                       }`}
                     >
-                      <div className="font-medium">{topic.icon} {topic.label}</div>
-                      <div className="text-sm text-gray-600">{topic.description}</div>
+                      <div className="font-semibold text-slate-800">{topic.icon} {topic.label}</div>
+                      <div className="mt-1 text-xs text-slate-500">{topic.description}</div>
                     </button>
                   ))}
                 </div>
@@ -485,76 +495,87 @@ const IeltsVocabularyPage: React.FC = () => {
             </Card>
 
             {/* Difficulty Filter */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Chọn cấp độ</CardTitle>
+            <Card className="border-none bg-white/80 shadow-lg shadow-emerald-100">
+              <CardHeader className="space-y-2 pb-4">
+                <CardTitle className="text-lg text-slate-800">Cấp độ phù hợp</CardTitle>
+                <p className="text-sm text-slate-500">
+                  Lọc theo độ khó để khớp với mục tiêu band hiện tại của bạn.
+                </p>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
+              <CardContent className="space-y-3 pt-0">
+                <button
+                  onClick={() => setSelectedDifficulty('all')}
+                  className={`w-full rounded-2xl border px-5 py-4 text-left text-sm transition ${
+                    selectedDifficulty === 'all'
+                      ? 'border-emerald-300 bg-emerald-100/80 text-emerald-700 shadow-sm'
+                      : 'border-white/80 bg-white hover:border-emerald-200 hover:bg-emerald-50/70'
+                  }`}
+                >
+                  <div className="font-semibold text-slate-800">🎯 Tất cả cấp độ</div>
+                  <div className="mt-1 text-xs text-slate-500">Từ cơ bản đến nâng cao</div>
+                </button>
+                {difficultyLevels.map((level) => (
                   <button
-                    onClick={() => setSelectedDifficulty('all')}
-                    className={`w-full p-3 rounded-lg border text-left transition-colors ${
-                      selectedDifficulty === 'all' 
-                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                        : 'border-gray-200 hover:border-gray-300'
+                    key={level.key}
+                    onClick={() => setSelectedDifficulty(level.key)}
+                    className={`w-full rounded-2xl border px-5 py-4 text-left text-sm transition ${
+                      selectedDifficulty === level.key
+                        ? 'border-emerald-300 bg-emerald-100/80 text-emerald-700 shadow-sm'
+                        : 'border-white/80 bg-white hover:border-emerald-200 hover:bg-emerald-50/70'
                     }`}
                   >
-                    <div className="font-medium">🎯 Tất cả cấp độ</div>
-                    <div className="text-sm text-gray-600">Từ cơ bản đến nâng cao</div>
+                    <div className="flex items-center justify-between">
+                      <div className="font-semibold text-slate-800">{level.label}</div>
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${level.color}`}>
+                        {level.description}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-slate-500">
+                      {level.key === 'beginner'
+                        ? 'Các khái niệm nền tảng giúp bạn bắt đầu.'
+                        : level.key === 'intermediate'
+                        ? 'Mở rộng vốn từ cho các band mục tiêu 5.5 - 6.5.'
+                        : 'Thử thách cao hơn để chinh phục band 7.0+'}
+                    </p>
                   </button>
-                  {difficultyLevels.map((level) => (
-                    <button
-                      key={level.key}
-                      onClick={() => setSelectedDifficulty(level.key)}
-                      className={`w-full p-3 rounded-lg border text-left transition-colors ${
-                        selectedDifficulty === level.key 
-                          ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">{level.label}</div>
-                        <span className={`px-2 py-1 rounded text-xs ${level.color}`}>
-                          {level.description}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                ))}
               </CardContent>
             </Card>
           </div>
         </div>
 
         {/* Vocabulary List */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>
-                Từ vựng {selectedTopic !== 'all' && `- ${getTopicInfo(selectedTopic).label}`}
-                {selectedDifficulty !== 'all' && ` (${getDifficultyInfo(selectedDifficulty).label})`}
+        <Card className="border-none bg-white/80 shadow-xl shadow-slate-200">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div className="space-y-1">
+                <CardTitle className="text-xl text-slate-900">Danh sách từ vựng</CardTitle>
+                <p className="text-sm text-slate-500">
+                  {selectedTopic !== 'all' ? getTopicInfo(selectedTopic).label : 'Tất cả chủ đề'} ·
+                  {' '}
+                  {selectedDifficulty !== 'all' ? getDifficultyInfo(selectedDifficulty).label : 'Mọi cấp độ'}
+                </p>
+              </div>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {pagination.total || 0} từ vựng
               </span>
-              <span className="text-sm font-normal text-gray-600">
-                {pagination.total || 0} từ
-              </span>
-            </CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Đang tải từ vựng...</p>
+              <div className="flex justify-center py-10 text-slate-500">
+                <Loader2 className="h-6 w-6 animate-spin" />
               </div>
             ) : sortedVocabulary.length === 0 ? (
-              <div className="text-center py-8">
-                <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">Không tìm thấy từ vựng phù hợp</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Thử thay đổi bộ lọc hoặc thêm từ vựng IELTS mới
+              <div className="py-10 text-center text-slate-500">
+                <BookOpen className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+                <p className="font-medium">Không tìm thấy từ vựng phù hợp.</p>
+                <p className="mt-2 text-sm text-slate-400">
+                  Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm khác.
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-4">
                 {sortedVocabulary.map((vocab) => {
                   const difficultyInfo = getDifficultyInfo(vocab.difficulty);
                   const progress = getProgressForVocabulary(vocab._id);
@@ -562,102 +583,88 @@ const IeltsVocabularyPage: React.FC = () => {
                   const nextReviewHint = getNextReviewHint(progress);
 
                   return (
-                    <Card key={vocab._id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className={`text-xs font-semibold px-2 py-1 rounded ${status.color}`}>
+                    <Card
+                      key={vocab._id}
+                      className="border border-slate-100/60 bg-white/90 shadow-sm shadow-slate-100 transition hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      <CardContent className="space-y-4 p-5">
+                        <div className="flex items-center justify-between">
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${status.color}`}>
                             {status.label}
                           </span>
                           {nextReviewHint && (
-                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
+                            <span className="flex items-center gap-1 text-xs text-slate-400">
+                              <Clock className="h-3.5 w-3.5" />
                               {nextReviewHint}
                             </span>
                           )}
                         </div>
 
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-bold text-blue-600">
-                                {vocab.word}
-                              </h3>
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                          <div className="min-w-[12rem] flex-1 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-2xl font-semibold text-slate-900">{vocab.word}</h3>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => speakWord(vocab.word)}
-                                className="p-1 h-6 w-6"
+                                className="h-7 w-7 rounded-full text-slate-500 hover:bg-slate-100"
                               >
-                                <Volume2 className="h-3 w-3" />
+                                <Volume2 className="h-3.5 w-3.5" />
                               </Button>
                             </div>
-                            <p className="text-sm text-gray-600 mb-1">
-                              {vocab.pronunciation}
-                            </p>
-                            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                            <p className="text-sm text-slate-400">{vocab.pronunciation}</p>
+                            <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
                               {vocab.partOfSpeech}
                             </span>
                           </div>
-                          <span className={`px-2 py-1 rounded text-xs ${difficultyInfo.color}`}>
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${difficultyInfo.color}`}>
                             {difficultyInfo.label}
                           </span>
                         </div>
 
-                        <p className="text-sm text-gray-700 mb-3">
-                          {vocab.definition}
-                        </p>
+                        <div className="space-y-3">
+                          <p className="text-sm leading-relaxed text-slate-600">{vocab.definition}</p>
+                          <p className="text-xs text-slate-400">{status.description}</p>
 
-                        <p className="text-xs text-gray-500 mb-3">{status.description}</p>
+                          {progress ? (
+                            <div className="flex flex-wrap gap-3 text-xs text-slate-400">
+                              <span className="font-medium text-slate-600">
+                                Cấp độ SRS: {progress.level}
+                              </span>
+                              <span>Đúng: {progress.correctCount}</span>
+                              <span>Sai: {progress.incorrectCount}</span>
+                            </div>
+                          ) : (
+                            <div className="text-xs text-slate-400">Chưa có thống kê ôn tập.</div>
+                          )}
+                        </div>
 
-                        {progress ? (
-                          <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-3">
-                            <span className="font-medium text-gray-700">
-                              Cấp độ SRS: {progress.level}
-                            </span>
-                            <span>
-                              Đúng: {progress.correctCount}
-                            </span>
-                            <span>
-                              Sai: {progress.incorrectCount}
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="text-xs text-gray-500 mb-3">
-                            Chưa có thống kê ôn tập.
-                          </div>
-                        )}
-
-                        <div className="bg-gray-50 p-2 rounded mb-3">
-                          <p className="text-sm italic text-gray-600">
-                            "{vocab.example}"
-                          </p>
+                        <div className="rounded-2xl bg-slate-50/80 p-3 text-sm italic text-slate-500">
+                          “{vocab.example}”
                         </div>
 
                         {vocab.collocations.length > 0 && (
-                          <div className="mb-3">
-                            <h4 className="text-xs font-semibold text-gray-700 mb-2">
-                              Collocations:
+                          <div className="space-y-2">
+                            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                              Collocations tiêu biểu
                             </h4>
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                               {vocab.collocations.slice(0, 2).map((collocation, index) => (
-                                <div key={index} className="text-xs">
-                                  <span className="font-medium text-blue-600">
-                                    {collocation.phrase}
-                                  </span>
-                                  <p className="text-gray-600 ml-2">
-                                    {collocation.definition}
-                                  </p>
+                                <div key={index} className="rounded-xl bg-white/80 p-2 text-xs text-slate-500 shadow-inner">
+                                  <span className="font-semibold text-sky-600">{collocation.phrase}</span>
+                                  <p className="mt-1 text-slate-400">{collocation.definition}</p>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-2">
                           {vocab.topics.slice(0, 3).map((topic) => (
                             <span
                               key={topic}
-                              className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded"
+                              className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-600"
                             >
                               {getTopicInfo(topic).icon} {topic}
                             </span>
@@ -671,7 +678,7 @@ const IeltsVocabularyPage: React.FC = () => {
             )}
             {hasMore && (
               <div ref={loadMoreRef} className="py-6">
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
                   {isFetchingMore ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
