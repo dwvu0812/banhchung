@@ -5,11 +5,13 @@
 ## Tính năng chính
 
 - 🧠 **Spaced Repetition**: Thuật toán học tập thông minh giúp ghi nhớ từ vựng lâu dài
-- 📚 **Từ vựng IELTS**: Tập trung vào từ vựng quan trọng cho kỳ thi IELTS
+- 📚 **Từ vựng IELTS Band 6.0**: Hơn 40 từ vựng thiết yếu cho mục tiêu band 6.0
 - 🔗 **Collocations**: Học các cụm từ và cách sử dụng từ vựng trong ngữ cảnh
 - 📊 **Theo dõi tiến độ**: Thống kê chi tiết về quá trình học tập
+- 🎯 **Phân loại theo chủ đề**: Environment, Education, Technology, Health, Work, v.v.
 - 🔐 **Google OAuth**: Đăng nhập dễ dàng với tài khoản Google
 - 📱 **Responsive Design**: Giao diện thân thiện trên mọi thiết bị
+- 🔊 **Phát âm**: Tích hợp Web Speech API để nghe phát âm từ vựng
 
 ## Công nghệ sử dụng
 
@@ -172,6 +174,28 @@ Khi trả lời đúng, level tăng lên. Khi trả lời sai, level giảm xu�
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
+
+## Dữ liệu từ vựng
+
+### 📊 **40+ từ vựng IELTS Band 6.0:**
+- **Phân loại theo chủ đề:**
+  - 🌱 **Environment & Nature**: pollution, renewable, conservation
+  - 📚 **Education**: curriculum, literacy, scholarship
+  - 💻 **Technology**: innovation, efficient, technology
+  - 🏥 **Health & Lifestyle**: nutrition, exercise
+  - 💼 **Work & Career**: employment, salary, colleague
+  - 🚗 **Transportation**: commute, traffic
+  - 🤝 **Social Issues**: poverty, community
+  - 📢 **Communication & Media**: communicate, information
+  - 🎭 **Culture & Entertainment**: culture, entertainment
+  - 🌾 **Food & Agriculture**: agriculture, organic
+  - 📖 **Academic Words**: research, develop, opportunity
+  - 🏛️ **General**: government, economy, population, society
+
+- **3 mức độ khó:** beginner, intermediate, advanced
+- **Collocations phong phú:** Mỗi từ có 2-3 collocations thông dụng
+- **Ví dụ thực tế:** Câu ví dụ dễ hiểu và áp dụng
+- **Phát âm IPA:** Ký hiệu phiên âm quốc tế cho mỗi từ
 
 ## Liên hệ
 
