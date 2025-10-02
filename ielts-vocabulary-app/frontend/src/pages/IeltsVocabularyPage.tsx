@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { vocabularyAPI } from '../services/api';
 import { Vocabulary } from '../types';
-import { BookOpen, Target, Users, Lightbulb, Volume2, Star } from 'lucide-react';
+import { BookOpen, Target, Users, Lightbulb, Volume2 } from 'lucide-react';
 
 const IeltsVocabularyPage: React.FC = () => {
   const [vocabularyData, setVocabularyData] = useState<{
@@ -35,18 +35,22 @@ const IeltsVocabularyPage: React.FC = () => {
     { key: 'advanced', label: 'Advanced', color: 'bg-purple-100 text-purple-800', description: 'Band 7.0+' },
   ];
 
-  useEffect(() => {
-    loadVocabulary();
-    loadTopics();
-  }, [selectedTopic, selectedDifficulty]);
+  const loadTopics = useCallback(async () => {
+    try {
+      const topicList = await vocabularyAPI.getTopics();
+      setTopics(topicList);
+    } catch (error) {
+      console.error('Error loading topics:', error);
+    }
+  }, []);
 
-  const loadVocabulary = async () => {
+  const loadVocabulary = useCallback(async () => {
     try {
       setLoading(true);
       const params: any = { limit: 50 };
       if (selectedTopic !== 'all') params.topic = selectedTopic;
       if (selectedDifficulty !== 'all') params.difficulty = selectedDifficulty;
-      
+
       const data = await vocabularyAPI.getAll(params);
       setVocabularyData(data);
     } catch (error) {
@@ -54,24 +58,23 @@ const IeltsVocabularyPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedDifficulty, selectedTopic]);
 
-  const loadTopics = async () => {
-    try {
-      const topicList = await vocabularyAPI.getTopics();
-      setTopics(topicList);
-    } catch (error) {
-      console.error('Error loading topics:', error);
-    }
-  };
+  useEffect(() => {
+    loadVocabulary();
+  }, [loadVocabulary]);
+
+  useEffect(() => {
+    loadTopics();
+  }, [loadTopics]);
 
   const handleSeedIeltsVocabulary = async () => {
     try {
       setSeeding(true);
       await vocabularyAPI.seedIeltsVocabulary();
       alert('IELTS vocabulary đã được thêm thành công!');
-      loadVocabulary();
-      loadTopics();
+      await loadVocabulary();
+      await loadTopics();
     } catch (error) {
       console.error('Error seeding vocabulary:', error);
       alert('Có lỗi xảy ra khi thêm từ vựng IELTS');
