@@ -6,7 +6,7 @@ import { Progress } from '../components/ui/progress';
 import { useAuth } from '../hooks/useAuth';
 import { userAPI, vocabularyAPI } from '../services/api';
 import { UserProgress, StudySession } from '../types';
-import { BookOpen, Brain, Target, TrendingUp, LogOut, Play } from 'lucide-react';
+import { BookOpen, Brain, Target, TrendingUp, LogOut, Play, Library } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -168,7 +168,7 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Study Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -189,6 +189,26 @@ const DashboardPage: React.FC = () => {
                 disabled={stats.dueToday === 0}
               >
                 {stats.dueToday > 0 ? 'Ôn tập ngay' : 'Học từ mới'}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Library className="h-5 w-5 mr-2 text-purple-600" />
+                Gói từ vựng IELTS
+              </CardTitle>
+              <CardDescription>
+                Khám phá từ vựng theo chủ đề và cấp độ
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => navigate('/ielts-vocabulary')} 
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                Xem gói từ vựng
               </Button>
             </CardContent>
           </Card>

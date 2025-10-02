@@ -1,11 +1,15 @@
 import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { VocabularyService } from './vocabulary.service';
+import { VocabularySeederService } from './vocabulary-seeder.service';
 import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('vocabulary')
 export class VocabularyController {
-  constructor(private readonly vocabularyService: VocabularyService) {}
+  constructor(
+    private readonly vocabularyService: VocabularyService,
+    private readonly vocabularySeederService: VocabularySeederService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -51,5 +55,12 @@ export class VocabularyController {
   @UseGuards(JwtAuthGuard)
   initializeSampleData() {
     return this.vocabularyService.initializeSampleData();
+  }
+
+  @Post('seed-ielts')
+  @UseGuards(JwtAuthGuard)
+  async seedIeltsVocabulary() {
+    await this.vocabularySeederService.seedIeltsVocabulary();
+    return { message: 'IELTS vocabulary seeded successfully' };
   }
 }
