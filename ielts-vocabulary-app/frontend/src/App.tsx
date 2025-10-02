@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import DashboardPage from './pages/DashboardPage';
 import StudyPage from './pages/StudyPage';
+import IeltsVocabularyPage from './pages/IeltsVocabularyPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -32,6 +33,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <StudyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ielts-vocabulary"
+              element={
+                <ProtectedRoute>
+                  <IeltsVocabularyPage />
                 </ProtectedRoute>
               }
             />

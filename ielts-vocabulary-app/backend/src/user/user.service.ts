@@ -24,17 +24,17 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User | null> {
     const db = this.databaseService.getDb();
-    return await db.collection('users').findOne({ email });
+    return await db.collection('users').findOne({ email }) as User | null;
   }
 
   async findByGoogleId(googleId: string): Promise<User | null> {
     const db = this.databaseService.getDb();
-    return await db.collection('users').findOne({ googleId });
+    return await db.collection('users').findOne({ googleId }) as User | null;
   }
 
   async findById(id: string): Promise<User | null> {
     const db = this.databaseService.getDb();
-    return await db.collection('users').findOne({ _id: new ObjectId(id) });
+    return await db.collection('users').findOne({ _id: new ObjectId(id) }) as User | null;
   }
 
   async updateProgress(userId: string, vocabularyId: string, correct: boolean): Promise<UserProgress> {
@@ -67,7 +67,7 @@ export class UserService {
         { $set: updateData }
       );
 
-      return { ...existingProgress, ...updateData };
+      return { ...existingProgress, ...updateData } as UserProgress;
     } else {
       const newProgress: UserProgress = {
         userId: new ObjectId(userId),
@@ -90,7 +90,7 @@ export class UserService {
     const db = this.databaseService.getDb();
     return await db.collection('userProgress')
       .find({ userId: new ObjectId(userId) })
-      .toArray();
+      .toArray() as UserProgress[];
   }
 
   async getDueVocabulary(userId: string): Promise<any[]> {

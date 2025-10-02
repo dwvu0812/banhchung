@@ -68,6 +68,11 @@ export const vocabularyAPI = {
     const response = await api.post('/vocabulary/initialize');
     return response.data;
   },
+
+  seedIeltsVocabulary: async () => {
+    const response = await api.post('/vocabulary/seed-ielts');
+    return response.data;
+  },
 };
 
 export const userAPI = {

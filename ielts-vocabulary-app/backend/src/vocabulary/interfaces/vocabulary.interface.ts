@@ -7,13 +7,13 @@ export interface Vocabulary {
   partOfSpeech: string;
   definition: string;
   example: string;
-  synonyms: string[];
-  antonyms: string[];
-  collocations: Collocation[];
+  synonyms?: string[];
+  antonyms?: string[];
+  collocations?: Collocation[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  topics: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  topics?: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Collocation {

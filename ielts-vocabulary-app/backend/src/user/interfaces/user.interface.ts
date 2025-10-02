@@ -6,8 +6,8 @@ export interface User {
   email: string;
   name: string;
   avatar?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UserProgress {
@@ -19,6 +19,6 @@ export interface UserProgress {
   correctCount: number;
   incorrectCount: number;
   lastReviewedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
