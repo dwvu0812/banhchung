@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button';
 import { vocabularyAPI, userAPI } from '../services/api';
 import { Vocabulary, UserProgress } from '../types';
 import { BookOpen, Target, Users, Lightbulb, Volume2, Search, Loader2, Clock } from 'lucide-react';
+import { resolveVocabularyAudioUrl, resolveVocabularyImageUrl, FALLBACK_VOCABULARY_IMAGE } from '../lib/media';
 
 type SortOption = 'default' | 'mastery-desc' | 'mastery-asc' | 'due-date';
 
@@ -27,6 +28,7 @@ const IeltsVocabularyPage: React.FC = () => {
   const [sortOption, setSortOption] = useState<SortOption>('default');
   const [progressMap, setProgressMap] = useState<Record<string, UserProgress>>({});
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const audioElementsRef = useRef<Record<string, HTMLAudioElement>>({});
 
   const ieltsTopics = [
     { key: 'ielts-writing', label: 'IELTS Writing', icon: '✍️', description: 'Essential vocabulary for Task 1 & 2' },
@@ -219,13 +221,46 @@ const IeltsVocabularyPage: React.FC = () => {
     }
   };
 
-  const speakWord = (text: string) => {
+  const speakWordWithSpeechSynthesis = useCallback((text: string) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       speechSynthesis.speak(utterance);
     }
-  };
+  }, []);
+
+  const playPronunciation = useCallback((vocabulary: Vocabulary) => {
+    const audioUrl = resolveVocabularyAudioUrl(vocabulary);
+
+    if (typeof Audio !== 'undefined' && audioUrl) {
+      const cacheKey = vocabulary._id;
+      const cache = audioElementsRef.current;
+      let audioElement = cache[cacheKey];
+
+      if (!audioElement || audioElement.src !== audioUrl) {
+        audioElement = new Audio(audioUrl);
+        audioElement.onerror = () => {
+          speakWordWithSpeechSynthesis(vocabulary.word);
+        };
+        cache[cacheKey] = audioElement;
+      }
+
+      audioElement.currentTime = 0;
+      const playPromise = audioElement.play();
+      if (playPromise?.catch) {
+        playPromise.catch(() => speakWordWithSpeechSynthesis(vocabulary.word));
+      }
+      return;
+    }
+
+    speakWordWithSpeechSynthesis(vocabulary.word);
+  }, [speakWordWithSpeechSynthesis]);
+
+  const handleImageError = useCallback((event: React.SyntheticEvent<HTMLImageElement>) => {
+    if (event.currentTarget.src !== FALLBACK_VOCABULARY_IMAGE) {
+      event.currentTarget.src = FALLBACK_VOCABULARY_IMAGE;
+    }
+  }, []);
 
   const getTopicInfo = (topicKey: string) => {
     return ieltsTopics.find(t => t.key === topicKey) || { 
@@ -581,94 +616,109 @@ const IeltsVocabularyPage: React.FC = () => {
                   const progress = getProgressForVocabulary(vocab._id);
                   const status = getLearningStatus(vocab._id);
                   const nextReviewHint = getNextReviewHint(progress);
+                  const imageUrl = resolveVocabularyImageUrl(vocab);
 
                   return (
                     <Card
                       key={vocab._id}
                       className="border border-slate-100/60 bg-white/90 shadow-sm shadow-slate-100 transition hover:-translate-y-0.5 hover:shadow-md"
                     >
-                      <CardContent className="space-y-4 p-5">
-                        <div className="flex items-center justify-between">
-                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${status.color}`}>
-                            {status.label}
-                          </span>
-                          {nextReviewHint && (
-                            <span className="flex items-center gap-1 text-xs text-slate-400">
-                              <Clock className="h-3.5 w-3.5" />
-                              {nextReviewHint}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex flex-wrap items-start justify-between gap-4">
-                          <div className="min-w-[12rem] flex-1 space-y-2">
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-2xl font-semibold text-slate-900">{vocab.word}</h3>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => speakWord(vocab.word)}
-                                className="h-7 w-7 rounded-full text-slate-500 hover:bg-slate-100"
-                              >
-                                <Volume2 className="h-3.5 w-3.5" />
-                              </Button>
-                            </div>
-                            <p className="text-sm text-slate-400">{vocab.pronunciation}</p>
-                            <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                              {vocab.partOfSpeech}
-                            </span>
+                      <CardContent className="p-5">
+                        <div className="flex flex-col gap-5 md:flex-row">
+                          <div className="overflow-hidden rounded-2xl bg-slate-100/80 shadow-inner md:w-48 lg:w-56">
+                            <img
+                              src={imageUrl}
+                              alt={`Minh họa cho từ ${vocab.word}`}
+                              className="h-40 w-full object-cover transition duration-500 ease-out hover:scale-105 md:h-full"
+                              loading="lazy"
+                              onError={handleImageError}
+                            />
                           </div>
-                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${difficultyInfo.color}`}>
-                            {difficultyInfo.label}
-                          </span>
-                        </div>
-
-                        <div className="space-y-3">
-                          <p className="text-sm leading-relaxed text-slate-600">{vocab.definition}</p>
-                          <p className="text-xs text-slate-400">{status.description}</p>
-
-                          {progress ? (
-                            <div className="flex flex-wrap gap-3 text-xs text-slate-400">
-                              <span className="font-medium text-slate-600">
-                                Cấp độ SRS: {progress.level}
+                          <div className="flex-1 space-y-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${status.color}`}>
+                                {status.label}
                               </span>
-                              <span>Đúng: {progress.correctCount}</span>
-                              <span>Sai: {progress.incorrectCount}</span>
+                              {nextReviewHint && (
+                                <span className="flex items-center gap-1 text-xs text-slate-400">
+                                  <Clock className="h-3.5 w-3.5" />
+                                  {nextReviewHint}
+                                </span>
+                              )}
                             </div>
-                          ) : (
-                            <div className="text-xs text-slate-400">Chưa có thống kê ôn tập.</div>
-                          )}
-                        </div>
 
-                        <div className="rounded-2xl bg-slate-50/80 p-3 text-sm italic text-slate-500">
-                          “{vocab.example}”
-                        </div>
-
-                        {vocab.collocations.length > 0 && (
-                          <div className="space-y-2">
-                            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                              Collocations tiêu biểu
-                            </h4>
-                            <div className="space-y-2">
-                              {vocab.collocations.slice(0, 2).map((collocation, index) => (
-                                <div key={index} className="rounded-xl bg-white/80 p-2 text-xs text-slate-500 shadow-inner">
-                                  <span className="font-semibold text-sky-600">{collocation.phrase}</span>
-                                  <p className="mt-1 text-slate-400">{collocation.definition}</p>
+                            <div className="flex flex-wrap items-start justify-between gap-4">
+                              <div className="min-w-[12rem] flex-1 space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <h3 className="text-2xl font-semibold text-slate-900">{vocab.word}</h3>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => playPronunciation(vocab)}
+                                    className="h-7 w-7 rounded-full text-slate-500 hover:bg-slate-100"
+                                  >
+                                    <Volume2 className="h-3.5 w-3.5" />
+                                    <span className="sr-only">Nghe phát âm</span>
+                                  </Button>
                                 </div>
+                                <p className="text-sm text-slate-400">{vocab.pronunciation}</p>
+                                <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                                  {vocab.partOfSpeech}
+                                </span>
+                              </div>
+                              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${difficultyInfo.color}`}>
+                                {difficultyInfo.label}
+                              </span>
+                            </div>
+
+                            <div className="space-y-3">
+                              <p className="text-sm leading-relaxed text-slate-600">{vocab.definition}</p>
+                              <p className="text-xs text-slate-400">{status.description}</p>
+
+                              {progress ? (
+                                <div className="flex flex-wrap gap-3 text-xs text-slate-400">
+                                  <span className="font-medium text-slate-600">
+                                    Cấp độ SRS: {progress.level}
+                                  </span>
+                                  <span>Đúng: {progress.correctCount}</span>
+                                  <span>Sai: {progress.incorrectCount}</span>
+                                </div>
+                              ) : (
+                                <div className="text-xs text-slate-400">Chưa có thống kê ôn tập.</div>
+                              )}
+                            </div>
+
+                            <div className="rounded-2xl bg-slate-50/80 p-3 text-sm italic text-slate-500">
+                              “{vocab.example}”
+                            </div>
+
+                            {vocab.collocations.length > 0 && (
+                              <div className="space-y-2">
+                                <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  Collocations tiêu biểu
+                                </h4>
+                                <div className="space-y-2">
+                                  {vocab.collocations.slice(0, 2).map((collocation, index) => (
+                                    <div key={index} className="rounded-xl bg-white/80 p-2 text-xs text-slate-500 shadow-inner">
+                                      <span className="font-semibold text-sky-600">{collocation.phrase}</span>
+                                      <p className="mt-1 text-slate-400">{collocation.definition}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="flex flex-wrap gap-2">
+                              {vocab.topics.slice(0, 3).map((topic) => (
+                                <span
+                                  key={topic}
+                                  className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-600"
+                                >
+                                  {getTopicInfo(topic).icon} {topic}
+                                </span>
                               ))}
                             </div>
                           </div>
-                        )}
-
-                        <div className="flex flex-wrap gap-2">
-                          {vocab.topics.slice(0, 3).map((topic) => (
-                            <span
-                              key={topic}
-                              className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-600"
-                            >
-                              {getTopicInfo(topic).icon} {topic}
-                            </span>
-                          ))}
                         </div>
                       </CardContent>
                     </Card>
