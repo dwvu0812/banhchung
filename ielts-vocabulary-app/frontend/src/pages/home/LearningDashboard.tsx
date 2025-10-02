@@ -6,7 +6,9 @@ import LearningSummary from './components/LearningSummary';
 import UpcomingReviews from './components/UpcomingReviews';
 import MasteryOverview from './components/MasteryOverview';
 import StudyPlanCard from './components/StudyPlanCard';
+import StudyStreakCard from './components/StudyStreakCard';
 import useDashboardData from './useDashboardData';
+import useStudyStreak from './useStudyStreak';
 
 interface LearningDashboardProps {
   user: User;
@@ -22,6 +24,7 @@ const LearningDashboard: React.FC<LearningDashboardProps> = ({
   onLogout,
 }) => {
   const { stats, dueVocabulary, levelDistribution, studyPlan, isLoading } = useDashboardData();
+  const { currentStreak, bestStreak, lastCheckIn, isCheckedInToday, checkIn } = useStudyStreak();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -29,9 +32,16 @@ const LearningDashboard: React.FC<LearningDashboardProps> = ({
         <DashboardHeader user={user} onStartStudy={onStartStudy} onLogout={onLogout} />
         <DailyMotivationQuote className="border-0 bg-gradient-to-r from-indigo-500/90 to-sky-500/90 text-white shadow-lg shadow-indigo-200/40" />
         <LearningSummary stats={stats} />
-        <section className="grid gap-4 md:grid-cols-2">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <StudyPlanCard plan={studyPlan} />
           <MasteryOverview distribution={levelDistribution} />
+          <StudyStreakCard
+            currentStreak={currentStreak}
+            bestStreak={bestStreak}
+            lastCheckIn={lastCheckIn}
+            isCheckedInToday={isCheckedInToday}
+            onCheckIn={checkIn}
+          />
         </section>
         <UpcomingReviews
           dueVocabulary={dueVocabulary}
