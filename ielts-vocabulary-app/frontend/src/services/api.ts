@@ -47,9 +47,23 @@ export const vocabularyAPI = {
     return response.data;
   },
 
-  search: async (query: string, page = 1, limit = 20) => {
+  search: async (
+    query: string,
+    options?: {
+      page?: number;
+      limit?: number;
+      difficulty?: string;
+      topic?: string;
+    }
+  ) => {
     const response = await api.get('/vocabulary/search', {
-      params: { q: query, page, limit },
+      params: {
+        q: query,
+        page: options?.page,
+        limit: options?.limit,
+        difficulty: options?.difficulty,
+        topic: options?.topic,
+      },
     });
     return response.data;
   },

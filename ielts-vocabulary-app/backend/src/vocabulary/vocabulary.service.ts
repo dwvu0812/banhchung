@@ -64,7 +64,13 @@ export class VocabularyService {
     }) as Vocabulary | null;
   }
 
-  async search(query: string, page: number = 1, limit: number = 20): Promise<{
+  async search(
+    query: string,
+    page: number = 1,
+    limit: number = 20,
+    difficulty?: string,
+    topic?: string,
+  ): Promise<{
     data: Vocabulary[];
     total: number;
     page: number;
@@ -72,14 +78,32 @@ export class VocabularyService {
   }> {
     const db = this.databaseService.getDb();
     const skip = (page - 1) * limit;
-    
-    const searchFilter = {
-      $or: [
-        { word: { $regex: query, $options: 'i' } },
-        { definition: { $regex: query, $options: 'i' } },
-        { synonyms: { $in: [new RegExp(query, 'i')] } },
-      ]
-    };
+
+    const filters: any[] = [];
+
+    if (query) {
+      filters.push({
+        $or: [
+          { word: { $regex: query, $options: 'i' } },
+          { definition: { $regex: query, $options: 'i' } },
+          { synonyms: { $in: [new RegExp(query, 'i')] } },
+        ],
+      });
+    }
+
+    if (difficulty) {
+      filters.push({ difficulty });
+    }
+
+    if (topic) {
+      filters.push({ topics: { $in: [topic] } });
+    }
+
+    const searchFilter = filters.length === 0
+      ? {}
+      : filters.length === 1
+        ? filters[0]
+        : { $and: filters };
 
     const [data, total] = await Promise.all([
       db.collection('vocabulary').find(searchFilter).skip(skip).limit(limit).toArray(),

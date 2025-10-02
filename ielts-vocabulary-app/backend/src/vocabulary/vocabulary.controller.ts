@@ -37,8 +37,16 @@ export class VocabularyController {
     @Query('q') query: string,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '20',
+    @Query('difficulty') difficulty?: string,
+    @Query('topic') topic?: string,
   ) {
-    return this.vocabularyService.search(query, parseInt(page), parseInt(limit));
+    return this.vocabularyService.search(
+      query,
+      parseInt(page),
+      parseInt(limit),
+      difficulty,
+      topic,
+    );
   }
 
   @Get('topics')
