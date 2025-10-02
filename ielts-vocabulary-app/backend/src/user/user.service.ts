@@ -47,9 +47,19 @@ export class UserService {
     });
 
     if (existingProgress) {
-      const newLevel = correct 
-        ? Math.min(existingProgress.level + 1, 5)
-        : Math.max(existingProgress.level - 1, 0);
+      // Improved level calculation
+      let newLevel: number;
+      if (correct) {
+        // Increase level, but cap at 6 (mastered)
+        newLevel = Math.min(existingProgress.level + 1, 6);
+      } else {
+        // Decrease level more aggressively for better retention
+        if (existingProgress.level <= 1) {
+          newLevel = 0; // Reset to beginning if struggling with early levels
+        } else {
+          newLevel = Math.max(existingProgress.level - 2, 0); // Drop by 2 levels
+        }
+      }
       
       const nextReviewDate = this.calculateNextReviewDate(newLevel);
       
@@ -69,11 +79,13 @@ export class UserService {
 
       return { ...existingProgress, ...updateData };
     } else {
+      // First time seeing this word
+      const initialLevel = correct ? 1 : 0;
       const newProgress: UserProgress = {
         userId: new ObjectId(userId),
         vocabularyId: new ObjectId(vocabularyId),
-        level: correct ? 1 : 0,
-        nextReviewDate: this.calculateNextReviewDate(correct ? 1 : 0),
+        level: initialLevel,
+        nextReviewDate: this.calculateNextReviewDate(initialLevel),
         correctCount: correct ? 1 : 0,
         incorrectCount: correct ? 0 : 1,
         lastReviewedAt: now,
@@ -149,8 +161,25 @@ export class UserService {
 
   private calculateNextReviewDate(level: number): Date {
     const now = new Date();
-    const intervals = [1, 3, 7, 14, 30, 90]; // days
-    const days = intervals[level] || 90;
+    // Improved spaced repetition intervals based on research
+    // Level 0: 10 minutes (for immediate review of failed words)
+    // Level 1: 1 day
+    // Level 2: 3 days  
+    // Level 3: 1 week
+    // Level 4: 2 weeks
+    // Level 5: 1 month
+    // Level 6: 3 months (mastered)
+    const intervals = [
+      10 / (24 * 60), // 10 minutes in days
+      1,              // 1 day
+      3,              // 3 days
+      7,              // 1 week
+      14,             // 2 weeks
+      30,             // 1 month
+      90              // 3 months
+    ];
+    
+    const days = intervals[Math.min(level, intervals.length - 1)] || 90;
     
     return new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
   }
