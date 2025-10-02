@@ -5,14 +5,13 @@ import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { useAuth } from '../hooks/useAuth';
 import { userAPI, vocabularyAPI } from '../services/api';
-import { UserProgress, StudySession } from '../types';
+import { UserProgress } from '../types';
 import { BookOpen, Brain, Target, TrendingUp, LogOut, Play, Library } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [progress, setProgress] = useState<UserProgress[]>([]);
-  const [dueVocabulary, setDueVocabulary] = useState<StudySession[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalLearned: 0,
@@ -34,7 +33,6 @@ const DashboardPage: React.FC = () => {
       ]);
 
       setProgress(progressData);
-      setDueVocabulary(dueData);
 
       // Calculate stats
       const totalLearned = progressData.length;
