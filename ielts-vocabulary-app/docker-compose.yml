@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: ielts-vocabulary-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ielts-vocabulary
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ielts-vocabulary-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  ielts-vocabulary-network:
+    driver: bridge
